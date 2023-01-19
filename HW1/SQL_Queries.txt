@@ -1,0 +1,554 @@
+===============================================================================================================================================
+4 |Apply the following queries in SQL and display the result of each query
+===============================================================================================================================================
+
+4.1 |Retrieve the name, club, and position for the players whose country is ‘USA’
+-----------------------------------------------------------------------------------------------------------------------------------------------
+SELECT
+    `NAME`,
+    `CLUB`,
+    `POSITION`
+FROM
+    `players`
+WHERE
+    `COUNTRY` = '\'USA\'';
+
+
+NAME					CLUB				POSITION	
+'DAMARCUS BEASLEY'	'Puebla FC'				'Defender'	
+'KYLE BECKERMAN'	'Real Salt Lake'		'Midfielder'	
+'TIM HOWARD'		'Everton FC'			'Goalkeeper'	
+'BRAD DAVIS'		'Houston Dynamo'		'Midfielder'	
+'JERMAINE JONES'	'Besiktas JK'			'Midfielder'	
+'NICK RIMANDO'		'Real Salt Lake'		'Goalkeeper'	
+'CLINT DEMPSEY'		'Seattle Sounders FC'	'Forward'	
+'MICHAEL BRADLEY'	'Toronto FC'			'Midfielder'	
+'OMAR GONZALEZ'		'Los Angeles Galaxy'	'Defender'	
+'JOZY ALTIDORE'		'Sunderland AFC'		'Forward'	
+'BRAD GUZAN'		'Aston Villa FC'		'Goalkeeper'	
+'ALEJANDRO BEDOYA'	'FC Nantes'				'Midfielder'	
+'FABIAN JOHNSON'	'TSG 1899 Hoffenheim'	'Defender'	
+'MIX DISKERUD'		'Rosenborg BK'			'Midfielder'	
+'GEOFF CAMERON'		'Stoke City FC'			'Defender'	
+'CHRIS WONDOLOWSKI'	'San Jose Earthquakes'	'Forward'	
+'GRAHAM ZUSI'		'Sporting Kansas City'	'Midfielder'	
+'TIMMY CHANDLER'	'1. FC Nuernberg'		'Defender'	
+'ARON JOHANNSSON'	'AZ Alkmaar'			'Forward'	
+'MATT BESLER'		'Sporting Kansas City'	'Defender'	
+'DEANDRE YEDLIN'	'Seattle Sounders FC'	'Defender'	
+'JULIAN GREEN'		'FC Bayern Muenchen'	'Midfielder'	
+'JOHN BROOKS'		'Hertha BSC'			'Defender'	
+
+
+
+
+4.2 |Retrieve the names of countries participating in the 2014 world cup (this database) that have won the world cup at least once.
+-----------------------------------------------------------------------------------------------------------------------------------------------
+SELECT
+    `COUNTRY_NAME`
+FROM
+    `country`
+WHERE
+    `NO_OF_WORLDCUP_WON` >= 1
+
+
+COUNTRY_NAME	
+'Argentina'	
+'Brazil'	
+'England'	
+'France'	
+'Germany'	
+'Italy'	
+'Spain'	
+'Uruguay'	
+
+
+
+
+4.3 |Retrieve the names of countries participating in the 2014 world cup (this database) that have never won the world cup. 
+-----------------------------------------------------------------------------------------------------------------------------------------------
+SELECT
+    `COUNTRY_NAME`
+FROM
+    `country`
+WHERE
+    `NO_OF_WORLDCUP_WON` = 0
+
+COUNTRY_NAME	
+'Algeria'	
+'Australia'	
+'Belgium'	
+'Bosnia & Herzegovin	
+'Cameroon'	
+'Chile'	
+'Columbia'	
+'Costa Rica'	
+'Croatia'	
+'Ecuador'	
+'Ghana'	
+'Greece'	
+'Honduras'	
+'Iran'	
+'Ivory Coast'	
+'Japan'	
+'Mexico'	
+'Netherlands'	
+'Nigeria'	
+'Portugal'	
+'Russia'	
+'South Korea'	
+'Switzerland'	
+'USA'	
+
+
+
+
+4.4 |Retrieve the name and country of the player with the most yellow cards in the 2014 world cup.
+-----------------------------------------------------------------------------------------------------------------------------------------------
+SELECT
+    `PLAYER_ID`,
+    `NAME`,
+    `COUNTRY`
+FROM
+    `players`
+WHERE
+    `PLAYER_ID` IN(
+    SELECT
+        `PLAYER_ID`
+    FROM
+        `player_cards`
+    WHERE
+        `YELLOW_CARDS` =(
+        SELECT
+            MAX(`YELLOW_CARDS`)
+        FROM
+           `player_cards`
+    )
+);
+
+
+PLAYER_ID	NAME						COUNTRY	
+214887		'KONSTANTINOS KATSOURANIS'	'Greece'	
+289964		'THIAGO SILVA'				'Brazil'	
+300411		'VEDAD IBISEVIC'			'Bosnia & Herzegovin	
+
+
+
+
+4.5 |For each Host city, retrieve the HostCity and the total number of games played in that city.
+-----------------------------------------------------------------------------------------------------------------------------------------------
+SELECT
+    `HOST_CITY`,
+    COUNT(*)
+FROM
+    `match_results`
+GROUP BY
+    `HOST_CITY`;
+
+
+HOST_CITY		COUNT(*)	
+'Belo Horizonte'	6	
+'Brasilia'			7	
+'Cuiaba'			4	
+'Curitiba'			4	
+'Fortaleza'			6	
+'Manaus'			4	
+'Natal'				4	
+'Porto Alegre'		5	
+'Recife'			5	
+'Rio De Janerio'	7	
+'Salvador'			6	
+'Sao Paulo'			6	
+
+
+
+4.6 |For each country, retrieve the country name and the number of games they played as Team1 in the MATCH_RESULTS table, and the total goals 
+		scored (SUM of Team1_score) and the goals against (SUM of Team2_score). 
+-----------------------------------------------------------------------------------------------------------------------------------------------
+SELECT
+    `COUNTRY_NAME`,
+    COUNT(*),
+    SUM(`TEAM1_SCORE`),
+    SUM(`TEAM2_SCORE`)
+FROM
+    `country`
+INNER JOIN `match_results` ON `TEAM1` = `COUNTRY_NAME`
+GROUP BY
+    `COUNTRY_NAME`;
+
+
+COUNTRY_NAME	COUNT(*)	SUM(`TEAM1_SCORE`)	SUM(`TEAM2_SCORE`)	
+'Algeria'		1					1					1	
+'Argentina'		4					5					1	
+'Australia'		2					2					6	
+'Belgium'		3					5					2	
+'Brazil'		6					7					13	
+'Cameroon'		2					1					8	
+'Chile'			1					3					1	
+'Columbia'		3					7					1	
+'Costa Rica'	2					1					1	
+'Croatia'		1					1					3	
+'Ecuador'		1					0					0	
+'England'		1					1					2	
+'France'		3					5					1	
+'Germany'		4					9					3	
+'Ghana'			1					1					2	
+'Greece'		1					2					1	
+'Honduras'		2					1					5	
+'Iran'			1					0					0	
+'Italy'			2					0					2	
+'Ivory Coast'	1					2					1	
+'Japan'			2					1					4	
+'Mexico'		1					1					0	
+'Netherlands'	4					4					1	
+'Nigeria'		2					3					3	
+'Portugal'		1					2					1	
+
+
+
+4.7 |For each country, retrieve the country name and the number of games they played as Team2 in the MATCH_RESULTS table, and the total goals 
+		scored (SUM of Team12_score) and the goals against (SUM of Team1_score).
+-----------------------------------------------------------------------------------------------------------------------------------------------
+SELECT
+    `COUNTRY_NAME`,
+    COUNT(*),
+    SUM(`TEAM2_SCORE`),
+    SUM(`TEAM1_SCORE`)
+FROM
+    `country`
+INNER JOIN `match_results` ON `TEAM2` = `COUNTRY_NAME`
+GROUP BY
+    `COUNTRY_NAME`;
+
+
+COUNTRY_NAME	COUNT(*)	SUM(`TEAM2_SCORE`)	SUM(`TEAM1_SCORE`)	
+'Algeria'			3				6					6	
+'Argentina'			3				3					3	
+'Australia'			1				1					3	
+'Belgium'			2				1					1	
+'Brazil'			1				4					1	
+'Cameroon'			1				0					1	
+'Chile'				3				3					3	
+'Columbia'			2				5					3	
+'Costa Rica'		3				4					1	
+'Croatia'			2				5					3	
+'Ecuador'			2				3					3	
+'England'			2				1					2	
+'France'			2				5					2	
+'Germany'			3				9					1	
+'Ghana'				2				3					4	
+'Greece'			3				1					4	
+'Honduras'			1				0					3	
+'Iran'				2				1					4	
+'Italy'				1				2					1	
+'Ivory Coast'		2				2					4	
+'Japan'				1				1					2	
+'Mexico'			3				4					3	
+'Netherlands'		3				11					3	
+'Nigeria'			2				0					2	
+'Portugal'			2				2					6	
+
+
+
+4.8 |Find all the matches played with country ‘Brazil’ as Team1 or Team2.
+-----------------------------------------------------------------------------------------------------------------------------------------------
+SELECT
+    `MATCH_ID`,
+    `MATCH_DATE`,
+    `STADIUM_NAME`,
+    `HOST_CITY`
+FROM
+    `match_results`
+WHERE
+    `TEAM1` = '\'Brazil\'' OR `TEAM2` = '\'Brazil\'';
+
+
+MATCH_ID	MATCH_DATE	STADIUM_NAME			HOST_CITY	
+1			'2014-06-1	'Arena de Sao Paulo'	'Sao Paulo'	
+17			'2014-06-1	'Estadio Castelao'		'Fortaleza'	
+33			'2014-06-2	'Estadio Nacional'		'Brasilia'	
+49			'2014-06-2	'Estadio Mineirao'		'Belo Horizonte'	
+57			'2014-07-0	'Estadio Castelao'		'Fortaleza'	
+61			'2014-07-0	'Estadio Mineirao'		'Belo Horizonte'	
+63			'2014-07-1	'Estadio Nacional'		'Brasilia'	
+
+
+4.9 |Retrieve the names of the players who have scored at least one goal, the player’s country, and the number of goals each player scored. 
+		Order the result by number of goals scored in descending order
+-----------------------------------------------------------------------------------------------------------------------------------------------
+SELECT
+    P.NAME,
+    P.COUNTRY,
+    G.GOALS
+FROM
+    `players` AS P,
+    `player_assists_goals` AS G
+WHERE
+    P.PLAYER_ID = G.PLAYER_ID AND GOALS >= 1
+ORDER BY
+    G.GOALS
+DESC;
+
+
+NAME					COUNTRY			GOALS   	
+'JAMES RODRIGUEZ'		'Columbia'		6	
+'THOMAS MUELLER'		'Germany'		5	
+'LIONEL MESSI'			'Argentina'		4	
+'ROBIN VAN PERSIE'		'Netherlands'	4	
+'NEYMAR SANTOS JR.'		'Brazil'		4	
+'KARIM BENZEMA'			'France'		3	
+'ARJEN ROBBEN'			'Netherlands'	3	
+'ENNER VALENCIA'		'Ecuador'		3	
+'ANDRE SCHUERRLE'		'Germany'		3	
+'XHERDAN SHAQIRI'		'Switzerland'	3	
+'ISLAM SLIMANI'			'Algeria'		2	
+'ABDELMOUMENE DJABOU'	'Algeria'		2	
+'ALEXIS SANCHEZ'		'Chile'			2	
+'LUIS SUAREZ'			'Uruguay'		2	
+'WILFRIED BONY'			'Ivory Coast'	2	
+'AHMED MUSA'			'Nigeria'		2	
+'MEMPHIS DEPAY'			'Netherlands'	2	
+'GERVINHO YAO KOUASSI'	'Ivory Coast'	2	
+'DAVID LUIZ'			'Brazil'		2	
+'TONI KROOS'			'Germany'		2	
+'JACKSON MARTINEZ'		'Columbia'		2	
+'BRYAN RUIZ'			'Costa Rica'	2	
+'IVAN PERISIC'			'Croatia'		2	
+'MARIO GOETZE'			'Germany'		2	
+'MARIO MANDZUKIC'		'Croatia'		2	
+'CLINT DEMPSEY'			'USA'			2	
+'OSCAR DOS SANTOS JR.'	'Brazil'		2	
+'ASAMOAH GYAN'			'Ghana'			2	
+'MATS HUMMELS'			'Germany'		2	
+'TIM CAHILL'			'Australia'		2	
+'ANDRE AYEW'			'Ghana'			2	
+'MIROSLAV KLOSE'		'Germany'		2	
+'MESUT OEZIL'			'Germany'		1	
+'DANIEL STURRIDGE'		'England'		1	
+'JOEL CAMPBELL'			'Costa Rica'	1	
+'SON HEUNGMIN'			'South Korea'	1	
+'OSCAR DUARTE'			'Costa Rica'	1	
+'JUAN CUADRADO'			'Columbia'		1	
+'HARIS SEFEROVIC'		'Switzerland'	1	
+'TEOFILO GUTIERREZ'		'Columbia'		1	
+'STEFAN DE VRIJ'		'Netherlands'	1	
+'GRANIT XHAKA'			'Switzerland'	1	
+'MOUSSA SISSOKO'		'France'		1	
+'CHARLES ARANGUIZ'		'Chile'			1	
+'ROMELU LUKAKU'			'Belgium'		1	
+'DRIES MERTENS'			'Belgium'		1	
+'KEVIN DE BRUYNE'		'Belgium'		1	
+'OGNJEN VRANJES'		'Bosnia & Herzegovin	1	
+'REZA GHOOCHANNEJAD'	'Iran'			1	
+'ANDREAS SAMARIS'		'Greece'		1	
+'YACINE BRAHIMI'		'Algeria'		1	
+'JULIAN GREEN'			'USA'			1	
+'JOHN BROOKS'			'USA'			1	
+'ALEXANDER KOKORIN'		'Russia'		1	
+'OLIVIER GIROUD'		'France'		1	
+'BLAISE MATUIDI'		'France'		1	
+'JUAN QUINTERO'			'Columbia'		1	
+'MARCOS ROJO'			'Argentina'		1	
+'SOFIANE FEGHOULI'		'Algeria'		1	
+'DALEY BLIND'			'Netherlands'	1	
+'LEROY FER'				'Netherlands'	1	
+'GEORGINIO WIJNALDUM'	'Netherlands'	1	
+'JOEL MATIP'			'Cameroon'		1	
+'PAUL POGBA'			'France'		1	
+'ADMIR MEHMEDI'			'Switzerland'	1	
+'DIVOCK ORIGI'			'Belgium'		1	
+'FERNANDO TORRES'		'Spain'			1	
+'PETER ODEMWINGIE'		'Nigeria'		1	
+'WESLEY SNEIJDER'		'Netherlands'	1	
+'BLERIM DZEMAILI'		'Switzerland'	1	
+'ORIBE PERALTA'			'Mexico'		1	
+'JAVIER HERNANDEZ'		'Mexico'		1	
+'RAFAEL MARQUEZ'		'Mexico'		1	
+'DIEGO GODIN'			'Uruguay'		1	
+'DAVID VILLA'			'Spain'			1	
+'KEISUKE HONDA'			'Japan'			1	
+'FRED CHAVES GUEDES'	'Brazil'		1	
+'JEAN BEAUSEJOUR'		'Chile'			1	
+'FERNANDINHO LUIZ ROZA'	'Brazil'		1	
+'XABI ALONSO'			'Spain'			1	
+'JERMAINE JONES'		'USA'			1	
+'KLAAS JAN HUNTELAAR'	'Netherlands'	1	
+'ALEKSANDR KERZHAKOV'	'Russia'		1	
+'IVICA OLIC'			'Croatia'		1	
+'WAYNE ROONEY'			'England'		1	
+'SAMI KHEDIRA'			'Germany'		1	
+'MILE JEDINAK'			'Australia'		1	
+'PABLO ARMERO'			'Columbia'		1	
+'CRISTIANO RONALDO'		'Portugal'		1	
+'JORGE VALDIVIA'		'Chile'			1	
+'GIOVANI DOS SANTOS'	'Mexico'		1	
+'ANDRES GUARDADO'		'Mexico'		1	
+'JAN VERTONGHEN'		'Belgium'		1	
+'KOO JACHEOL'			'South Korea'	1	
+'RAFIK HALLICHE'		'Algeria'		1	
+'MATHIEU VALBUENA'		'France'		1	
+'GEORGIOS SAMARAS'		'Greece'		1	
+'CLAUDIO MARCHISIO'		'Italy'			1	
+'SOKRATIS PAPASTATHOPOULOS'	'Greece'	1	
+'MIRALEM PJANIC'		'Bosnia & Herzegovin	1	
+'EDIN DZEKO'			'Bosnia & Herzegovin	1	
+'VEDAD IBISEVIC'		'Bosnia & Herzegovin	1	
+'MAROUANE FELLAINI'		'Belgium'		1	
+'THIAGO SILVA'			'Brazil'		1	
+'SHINJI OKAZAKI'		'Japan'			1	
+'VARELA SILVESTRE'		'Portugal'		1	
+'NANI DA CUNHA'			'Portugal'		1	
+'ANGEL DI MARIA'		'Argentina'		1	
+'JUAN MATA'				'Spain'			1	
+'EDINSON CAVANI'		'Uruguay'		1	
+'LEE KEUNHO'			'South Korea'	1	
+'MARCOS URENA'			'Costa Rica'	1	
+'EDUARDO VARGAS'		'Chile'			1	
+'CARLO COSTLY'			'Honduras'		1	
+'GONZALO HIGUAIN'		'Argentina'		1	
+'MARIO BALOTELLI'		'Italy'			1	
+
+
+4.10 |Repeat 9. but only for the players who have more than 2 goals.
+-----------------------------------------------------------------------------------------------------------------------------------------------
+SELECT
+    P.NAME,
+    P.COUNTRY,
+    G.GOALS
+FROM
+    `players` AS P,
+    `player_assists_goals` AS G
+WHERE
+    P.PLAYER_ID = G.PLAYER_ID AND GOALS >= 2
+ORDER BY
+    G.GOALS
+DESC;
+
+
+NAME					COUNTRY			GOALS   	
+'JAMES RODRIGUEZ'		'Columbia'		6	
+'THOMAS MUELLER'		'Germany'		5	
+'NEYMAR SANTOS JR.'		'Brazil'		4	
+'ROBIN VAN PERSIE'		'Netherlands'	4	
+'LIONEL MESSI'			'Argentina'		4	
+'KARIM BENZEMA'			'France'		3	
+'XHERDAN SHAQIRI'		'Switzerland'	3	
+'ANDRE SCHUERRLE'		'Germany'		3	
+'ARJEN ROBBEN'			'Netherlands'	3	
+'ENNER VALENCIA'		'Ecuador'		3	
+'WILFRIED BONY'			'Ivory Coast'	2	
+'JACKSON MARTINEZ'		'Columbia'		2	
+'IVAN PERISIC'			'Croatia'		2	
+'ABDELMOUMENE DJABOU'	'Algeria'		2	
+'MEMPHIS DEPAY'			'Netherlands'	2	
+'AHMED MUSA'			'Nigeria'		2	
+'ISLAM SLIMANI'			'Algeria'		2	
+'OSCAR DOS SANTOS JR.'	'Brazil'		2	
+'MATS HUMMELS'			'Germany'		2	
+'MARIO GOETZE'			'Germany'		2	
+'CLINT DEMPSEY'			'USA'			2	
+'ASAMOAH GYAN'			'Ghana'			2	
+'TIM CAHILL'			'Australia'		2	
+'BRYAN RUIZ'			'Costa Rica'	2	
+'ALEXIS SANCHEZ'		'Chile'			2	
+'LUIS SUAREZ'			'Uruguay'		2	
+'DAVID LUIZ'			'Brazil'		2	
+'TONI KROOS'			'Germany'		2	
+'GERVINHO YAO KOUASSI'	'Ivory Coast'	2	
+'ANDRE AYEW'			'Ghana'			2	
+'MIROSLAV KLOSE'		'Germany'		2	
+'MARIO MANDZUKIC'		'Croatia'		2	
+
+
+
+
+===============================================================================================================================================
+5 |Execute 3 more Insert commands in SQL that attempt to insert 3 more records, such that the records violate the integrity constraints. 
+	Make each of the 3 records violate a different type of integrity constraint.
+===============================================================================================================================================
+### Key Integrity Constraint ###
+
+MySQL said: 
+#1062 - Duplicate entry ''Algeria'' for key 'PRIMARY'
+
+INSERT INTO `country`(
+    `COUNTRY_NAME`,
+    `POPULATION`,
+    `NO_OF_WORLDCUP_WON`,
+    `MANAGER`
+	)
+VALUES(
+    '\'Algeria\'',
+    '500',
+    '4',
+    '\'Alina Burlacu\''
+	);
+	
+--------------------------------------------------------------------------------------
+### Referential Integrity Constraint ###
+
+MySQL said: 
+#1452 - Cannot add or update a child row: a foreign key constraint fails (`soccer_burlacu`.`player_cards`, CONSTRAINT `player_cards_ibfk_1` FOREIGN KEY (`PLAYER_ID`) REFERENCES `players` (`PLAYER_ID`))
+
+INSERT INTO `player_cards`(
+    `PLAYER_ID`,
+    `YELLOW_CARDS`,
+    `RED_CARDS`
+)
+VALUES('7777', '7', '7');
+
+--------------------------------------------------------------------------------------
+### Entity Integrity Constraint ###
+
+MySQL said: 
+#1048 - Column 'COUNTRY_NAME' cannot be null
+
+INSERT INTO `country`(
+    `COUNTRY_NAME`,
+    `POPULATION`,
+    `NO_OF_WORLDCUP_WON`,
+    `MANAGER`
+)
+VALUES(NULL, '500', '3', 'alina');
+
+
+
+
+===============================================================================================================================================
+6 |Execute a command in SQL to Delete a record that violates a referential integrity constraint.
+===============================================================================================================================================
+DELETE FROM
+    `country`
+WHERE
+    `COUNTRY_NAME` = '\'Netherlands\'';
+	
+#1451 - Cannot delete or update a parent row: a foreign key constraint fails (`soccer_burlacu`.`players`, CONSTRAINT `players_ibfk_1` FOREIGN KEY (`COUNTRY`) REFERENCES `country` (`COUNTRY_NAME`))
+
+
+
+
+===============================================================================================================================================
+7 |Repeat 5, but Insert three new records that do not violate any integrity constraints.
+===============================================================================================================================================
+INSERT INTO `country`(
+    `COUNTRY_NAME`,
+    `POPULATION`,
+    `NO_OF_WORLDCUP_WON`,
+    `MANAGER`
+)
+VALUES(
+    '\'Romania\'',
+    '700',
+    '1',
+    '\'Alina Burlacu\''),
+    (
+    '\'Minecraft\'',
+    '200',
+    '0',
+    '\'Markus Persson\''),
+    (
+    '\'Cubeworld\'',
+    '300',
+    '1',
+    '\'Wolfram von Funck\''
+	);
